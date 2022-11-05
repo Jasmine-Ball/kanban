@@ -1,4 +1,4 @@
-# kanban
+# kanban-compact
 
 This uses a single column and technically isn't a kanban board, but can be used to store and filter basic tasks according to tags (new, in-progress etc) or other data via a Linux terminal / Termux with Bash.
 
