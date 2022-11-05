@@ -12,3 +12,5 @@ Hidden functions:
 
 1. Run the script with a single parameter to search the raw data file: `./kanban.sh water`
 2. Run the script and press `Enter` twice to quickly see recent tasks
+
+
