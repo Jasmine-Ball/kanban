@@ -111,12 +111,12 @@ for i in {1..20};
 do
 if [ $1 ]
   then
-  title=$(sed -n ${i}p kanban.txt | grep ${1} | cut -d ' ' -f 3  | cut -b -27)
+  title=$(sed -n ${i}p kanban.txt | grep ${1} | cut -d ' ' -f 3)
   else 
-  title=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 3 | cut -b -27);
+  title=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 3);
 fi
-  descr=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 4- | cut -b -24)
-if [ $title ]; then echo " $(tput bold setaf 2)${title//-/ } $(tput sgr0)${descr//-/ }"; fi
+  descr=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 4-)
+if [ $title ]; then echo " $(tput bold setaf 2)${title//-/ } $(tput sgr0)${descr//-/ }" | cut -b -65; fi
 done
 echo -e "-------------------------------------------------"
 }
