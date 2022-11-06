@@ -116,7 +116,7 @@ if [ $1 ]
   title=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 3);
 fi
   descr=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 4-)
-if [ $title ]; then echo " $(tput bold setaf 2)${title//-/ } $(tput sgr0)${descr//-/ }" | cut -b -65; fi
+if [ $title ]; then echo " $(tput bold setaf 2)${title//-/ } $(tput sgr0)${descr//-/ }" | cut -b -64; fi
 done
 echo -e "-------------------------------------------------"
 }
