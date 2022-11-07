@@ -107,16 +107,21 @@ update_entries_fun () {
 recent_entries_fun () {
 echo "-------------------------------------------------"
 
-for i in {1..20}; 
+line_total=$(sed -n '$=' kanban.txt)
+line_count=1
+for i in `seq $line_total`; 
 do
 if [ $1 ]
   then
+  all_data=$(sed -n ${i}p kanban.txt | grep ${1} )
   title=$(sed -n ${i}p kanban.txt | grep ${1} | cut -d ' ' -f 3)
   else 
   title=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 3);
 fi
   descr=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 4-)
-if [ $title ]; then echo " $(tput bold setaf 2)${title//-/ } $(tput sgr0)${descr//-/ }" | cut -b -64; fi
+if [ $title ] && [ $line_count -le 20 ]; then line_count=$((line_count +1)); echo " $(tput bold setaf 2)${title//-/ } $(tput sgr0)${descr//-/ }" | cut -b -64; fi
+
+
 done
 echo -e "-------------------------------------------------"
 }
