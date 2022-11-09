@@ -101,7 +101,7 @@ update_entries_fun () {
     then
       title=$(sed -n /.*$id.*/p kanban.txt | cut -d ' ' -f 3)
       description=$(sed -n /.*$id.*/p kanban.txt | cut -d ' ' -f 4)
-      tags=$(sed -n /.*$id.*/p kanban.txt | cut -d ' ' -f 2 | cut -d '#' -f 2)
+      tags=$(sed -n /.*$id.*/p kanban.txt | cut -d ' ' -f 2 | cut -d ' ' -f 2)
       read -p "$HG"ID"$Z: " -i $selected_id -e selected_id
       read -p "$HG"Title"$Z: " -i $title -e title
       read -p "$HG"Description"$Z: " -i $description -e description
@@ -109,7 +109,7 @@ update_entries_fun () {
       sed -i /${selected_id}/d kanban.txt
       title=${title//' '/-}
       description=${description//' '/-}
-      tags='#'${tags//' '/#}
+      tags=${tags//' '/#}
       process_user_input_fun $title $description $tags $selected_id
     else
       echo 'No unique match found. Please pass the search in as first parameter'
