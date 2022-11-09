@@ -41,7 +41,7 @@ case $1 in
   ;;
 
   *)
-  recent_entries_fun
+  recent_entries_fun "-"
   ;;  
 
 esac
@@ -140,10 +140,18 @@ if [ $1 ]
   title=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 3);
 fi
   descr=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 4-)
-if [ $line_id ] && [ $line_count -le 20 ]; then line_count=$((line_count +1)); echo " $(tput bold setaf 2)${title//-/ } $(tput sgr0)${descr//-/ }" | cut -b -${results_width}; fi
+if [ $line_id ] && [ $line_count -le 20 ]
+ then
+ line_count=$((line_count +1))
+ echo " $(tput bold setaf 2)${title//-/ } $(tput sgr0)${descr//-/ }" | cut -b -${results_width}
+ elif [ $line_count -gt 20 ]
+ then
+ echo -e "-------------------------------------------------"
+ exit 0
+fi
 
 done
-echo -e "-------------------------------------------------"
+
 }
 
 #Show menu
