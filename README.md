@@ -11,6 +11,5 @@ This uses a single column and technically isn't a kanban board, but can be used 
 Hidden functions:
 
 1. Run the script with a single parameter to search the raw data file: `./kanban.sh water`
-2. Run the script and press `Enter` twice to quickly see recent tasks
-
-
+2. Run the script with `set` as the first parameter and the number of bytes to show for each result
+3. Run the script and press `Enter` twice to quickly see recent tasks
