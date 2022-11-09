@@ -13,6 +13,11 @@ tput -x clear
 tput -x init
 
 #Set the width of the results
+if [ ! -f kanban_params.txt ]
+then
+echo 56 > kanban_params.txt
+fi
+
 results_width=$(sed -n /.*$id.*/p kanban_params.txt | cut -d ' ' -f 1)
 
 #Process main memnu selection
@@ -41,7 +46,7 @@ case $1 in
   ;;
 
   *)
-  recent_entries_fun "-"
+  recent_entries_fun "#"
   ;;  
 
 esac
