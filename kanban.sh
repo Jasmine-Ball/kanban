@@ -1,7 +1,13 @@
 #!/bin/bash
 
-#Remove old backups and add new
-rm backup-$(date +%y%m --date='-31 day')*  2> /dev/null
+#Create and/or move backups
+if [ ! -d kanban_backups ]
+  then
+    mkdir kanban_backups
+fi
+
+rm ./kanban_backups/backup-*  2> /dev/null
+mv ./backup-* kanban_backups/ 2> /dev/null
 cp kanban.txt "backup-$(date +%y%m%d%H%M%S)"
 
 #Set colors
