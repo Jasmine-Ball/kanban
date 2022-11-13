@@ -24,16 +24,21 @@ Z=$(tput sgr0)
 tput -x clear
 tput -x init
 
-#Set the width of the results
+#Set the width of the results and max number per tag
 if [ ! -f kanban_params.txt ]
   then
-    echo 56 > kanban_params.txt
+    echo 56 20 > kanban_params.txt
 fi
 
 results_width=$(sed -n /.*$id.*/p kanban_params.txt | cut -d ' ' -f 1)
+max_results=$(sed -n /.*$id.*/p kanban_params.txt | cut -d ' ' -f 2)
 
-#Set the max number of results per tag
-max_results=20
+# #Set the max number of results per tag
+# if [ $3 ]
+#   then
+#     echo "Position 3 set"
+#   fi
+# max_results=20
 
 #Process main memnu selection
 process_user_selection () {
@@ -61,7 +66,7 @@ case $1 in
   ;;
 
   *)
-  ordered_entries_fun "#" 10
+  ordered_entries_fun "#" $max_results
   ;;  
 
 esac
@@ -80,7 +85,8 @@ add_entries_fun () {
   read -p "$HG2"Tags"$Z: " -e tags 
   title=${title//' '/-}
   description=${description//' '/-}
-  tags='#'${tags//' '/#}
+  taglength=${#tags}
+  if [ $taglength > 0 ]; then tags='#'${tags//' '/#}; else tags='#other'; fi
   id=$(date +%y%m%d%H%M%S)
   echo $id $tags $title $description >> kanban.txt
 }
@@ -151,6 +157,7 @@ ordered_entries_fun () {
     then
       recent_entries_fun "#orange" $max_results
       recent_entries_fun "#soon" $max_results
+
       recent_entries_fun $1 $2
     else
       recent_entries_fun $1 $max_results
@@ -202,11 +209,14 @@ show_menu_fun () {
 
 #Set prefered amount of data per entry
 set_prefs_fun () {
- if [ $1 == "set" ]
+ if [ $1 == "setw" ]
    then
      echo $2 > kanban_params.txt
+ elif [ $1 == "setr" ]
+   then
+     echo $results_width $2 > kanban_params.txt
  fi
- 
+
 }
 
 #Positional parameters
