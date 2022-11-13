@@ -155,6 +155,7 @@ ordered_entries_fun () {
     else
       recent_entries_fun $1 $max_results
   fi
+
   echo "-------------------------------------------------"
 }
 
@@ -182,13 +183,13 @@ for i in `seq $line_total -1 1`;
         if [ $task_status_soon -gt 0 ]; then color=$HG2; fi
         if [ $task_status_green -gt 0 ]; then color=$G70; fi
         if [ $task_status_orange -gt 0 ]; then color=$HO; fi
-
         echo " ${color}${title//-/ } ${Z}${descr//-/ }" | cut -b -${results_width}
     elif [ $line_count -gt $2 ]
       then
         echo "-------------------------------------------------"
         exit 0
     fi
+
   done
   
 }
@@ -205,6 +206,7 @@ set_prefs_fun () {
    then
      echo $2 > kanban_params.txt
  fi
+ 
 }
 
 #Positional parameters
