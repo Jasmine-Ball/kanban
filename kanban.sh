@@ -11,8 +11,14 @@ mv ./backup-* kanban_backups/ 2> /dev/null
 cp kanban.txt "backup-$(date +%y%m%d%H%M%S)"
 
 #Set colors
-HG="$(tput bold setaf 2)"
-Z="$(tput sgr0)"
+HG2=$(tput bold setaf 2)
+G2=$(tput setaf 2)
+HG70=$(tput bold setaf 70)
+G70=$(tput setaf 70)
+H=$(tput bold)
+HO=$(tput bold setaf 1)
+O=$(tput setaf 1)
+Z=$(tput sgr0)
 
 #Set the terminal to start at the top
 tput -x clear
@@ -25,6 +31,9 @@ if [ ! -f kanban_params.txt ]
 fi
 
 results_width=$(sed -n /.*$id.*/p kanban_params.txt | cut -d ' ' -f 1)
+
+#Set the max number of results per tag
+max_results=20
 
 #Process main memnu selection
 process_user_selection () {
@@ -52,7 +61,7 @@ case $1 in
   ;;
 
   *)
-  recent_entries_fun "#"
+  ordered_entries_fun "#" 10
   ;;  
 
 esac
@@ -66,9 +75,9 @@ process_user_input_fun () {
 
 #Add entries
 add_entries_fun () {
-  read -p "$HG"Title"$Z: " -e title 
-  read -p "$HG"Description"$Z: " -e description 
-  read -p "$HG"Tags"$Z: " -e tags 
+  read -p "$HG2"Title"$Z: " -e title 
+  read -p "$HG2"Description"$Z: " -e description 
+  read -p "$HG2"Tags"$Z: " -e tags 
   title=${title//' '/-}
   description=${description//' '/-}
   tags='#'${tags//' '/#}
@@ -78,14 +87,14 @@ add_entries_fun () {
 
 #Filter
 filter_entries_fun () {
-  read -p "$HG"Search"$Z: " -e search 
+  read -p "$HG2"Search"$Z: " -e search 
   selected_id=$(sed -n /.*$search.*/p kanban.txt | cut -d ' ' -f 1)
-  recent_entries_fun $search
+  ordered_entries_fun $search
 }
 
 #Remove
 remove_entries_fun () {
-  read -p "$HG"ID"$Z: " -e id 
+  read -p "$HG2"ID"$Z: " -e id 
   selected_id=$(sed -n /.*$id.*/p kanban.txt | cut -d ' ' -f 1)
 
   if [ ${#selected_id} == 12 ]
@@ -100,7 +109,7 @@ remove_entries_fun () {
 
 #Update
 update_entries_fun () {
-  read -p "$HG"ID"$Z: " -e id
+  read -p "$HG2"ID"$Z: " -e id
   selected_id=$(sed -n /.*$id.*/p kanban.txt | cut -d ' ' -f 1)
 
   if [ ${#selected_id} == 12 ]
@@ -108,10 +117,10 @@ update_entries_fun () {
       title=$(sed -n /.*$id.*/p kanban.txt | cut -d ' ' -f 3)
       description=$(sed -n /.*$id.*/p kanban.txt | cut -d ' ' -f 4)
       tags=$(sed -n /.*$id.*/p kanban.txt | cut -d ' ' -f 2 | cut -d ' ' -f 2)
-      read -p "$HG"ID"$Z: " -i $selected_id -e selected_id
-      read -p "$HG"Title"$Z: " -i $title -e title
-      read -p "$HG"Description"$Z: " -i $description -e description
-      read -p "$HG"Tags"$Z: " -i $tags -e tags
+      read -p "$HG2"ID"$Z: " -i $selected_id -e selected_id
+      read -p "$HG2"Title"$Z: " -i $title -e title
+      read -p "$HG2"Description"$Z: " -i $description -e description
+      read -p "$HG2"Tags"$Z: " -i $tags -e tags
       sed -i /${selected_id}/d kanban.txt
       title=${title//' '/-}
       description=${description//' '/-}
@@ -135,10 +144,22 @@ for i in `seq $line_total -1 1`;
 echo "-------------------------------------------------"
 }
 
+#Order entries
+ordered_entries_fun () {
+  echo "-------------------------------------------------"
+  if [ $2 ]
+    then
+      recent_entries_fun "#orange" $max_results
+      recent_entries_fun "#soon" $max_results
+      recent_entries_fun $1 $2
+    else
+      recent_entries_fun $1 $max_results
+  fi
+  echo "-------------------------------------------------"
+}
+
 #Show entries
 recent_entries_fun () {
-echo "-------------------------------------------------"
-
 line_total=$(sed -n '$=' kanban.txt)
 line_count=1
 for i in `seq $line_total -1 1`; 
@@ -151,23 +172,30 @@ for i in `seq $line_total -1 1`;
         title=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 3);
     fi
       descr=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 4-)
-    if [ $line_id ] && [ $line_count -le 20 ]
+      task_status_green=$(sed -n ${i}p kanban.txt | grep -c '#green')
+      task_status_soon=$(sed -n ${i}p kanban.txt | grep -c '#soon')
+      task_status_orange=$(sed -n ${i}p kanban.txt | grep -c '#orange')
+    if [ $line_id ] && [ $line_count -le $2 ]
       then
         line_count=$((line_count +1))
-        echo " $(tput bold setaf 2)${title//-/ } $(tput sgr0)${descr//-/ }" | cut -b -${results_width}
-    elif [ $line_count -gt 20 ]
+        color=$HG70
+        if [ $task_status_soon -gt 0 ]; then color=$HG2; fi
+        if [ $task_status_green -gt 0 ]; then color=$G70; fi
+        if [ $task_status_orange -gt 0 ]; then color=$HO; fi
+
+        echo " ${color}${title//-/ } ${Z}${descr//-/ }" | cut -b -${results_width}
+    elif [ $line_count -gt $2 ]
       then
-        echo -e "-------------------------------------------------"
+        echo "-------------------------------------------------"
         exit 0
     fi
   done
-echo -e "-------------------------------------------------"
-
+  
 }
 
 #Show menu
 show_menu_fun () {
-  read -p "$HG"A"$Z"dd" $HG"F"$Z"ilter" $HG"R"$Z"emove" $HG"U"$Z"pdate" $HG"E"$Z"xit": " -e menu_input
+  read -p "$HG2"A"$Z"dd" $HG2"F"$Z"ilter" $HG2"R"$Z"emove" $HG2"U"$Z"pdate" $HG2"E"$Z"xit": " -e menu_input
   process_user_selection $menu_input
 }
 
