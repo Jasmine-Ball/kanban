@@ -142,19 +142,19 @@ update_entries_fun () {
 
 #Show entire line including ID and tags
 verbose_entries_fun () {
-echo "-------------------------------------------------"
+echo "----------------------------------------"
 line_total=$(sed -n '$=' kanban.txt)
 for i in `seq $line_total -1 1`; 
   do
     line_id=$(sed -n ${i}p kanban.txt | tr 'A-Z' 'a-z' | grep ${1,,} | cut -d ' ' -f 1)
     if [ ${#line_id} == 12 ]; then title=$(sed -n ${i}p kanban.txt | grep ${line_id}); echo $title | cut -b -${results_width}; fi
   done
-echo "-------------------------------------------------"
+echo "----------------------------------------"
 }
 
 #Order entries
 ordered_entries_fun () {
-  echo "-------------------------------------------------"
+  echo "----------------------------------------"
   if [ $2 ]
     then
       recent_entries_fun "#p0" $((2 * $max_results))
@@ -166,7 +166,7 @@ ordered_entries_fun () {
       recent_entries_fun $1 $((4 * $max_results))
   fi
 
-  echo "-------------------------------------------------"
+  echo "----------------------------------------"
 }
 
 #Show entries
@@ -219,7 +219,7 @@ show_menu_fun () {
 set_prefs_fun () {
  if [ $1 == "setw" ]
    then
-     echo $2 > kanban_params.txt
+     echo $2 $max_results > kanban_params.txt
  elif [ $1 == "setr" ]
    then
      echo $results_width $2 > kanban_params.txt
