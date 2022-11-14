@@ -10,7 +10,15 @@ rm ./kanban_backups/backup-*  2> /dev/null
 mv ./backup-* kanban_backups/ 2> /dev/null
 cp kanban.txt "backup-$(date +%y%m%d%H%M%S)"
 
-#Set colors
+#Set item colors
+P0=$(tput bold setaf 121)
+P1=$(tput bold setaf 226)
+P2=$(tput bold setaf 178)
+P3=$(tput bold setaf 70)
+P4=$(tput bold setaf 034)
+ST=$(tput bold setaf 193)
+
+#Set other colors
 HG2=$(tput bold setaf 2)
 G2=$(tput setaf 2)
 HG70=$(tput bold setaf 70)
@@ -20,6 +28,8 @@ HO=$(tput bold setaf 1)
 O=$(tput setaf 1)
 Z=$(tput sgr0)
 
+
+
 #Set the terminal to start at the top
 tput -x clear
 tput -x init
@@ -27,18 +37,11 @@ tput -x init
 #Set the width of the results and max number per tag
 if [ ! -f kanban_params.txt ]
   then
-    echo 56 20 > kanban_params.txt
+    echo 56 1 > kanban_params.txt
 fi
 
 results_width=$(sed -n /.*$id.*/p kanban_params.txt | cut -d ' ' -f 1)
 max_results=$(sed -n /.*$id.*/p kanban_params.txt | cut -d ' ' -f 2)
-
-# #Set the max number of results per tag
-# if [ $3 ]
-#   then
-#     echo "Position 3 set"
-#   fi
-# max_results=20
 
 #Process main memnu selection
 process_user_selection () {
@@ -66,7 +69,7 @@ case $1 in
   ;;
 
   *)
-  ordered_entries_fun "#" $max_results
+  ordered_entries_fun 1 1
   ;;  
 
 esac
@@ -85,8 +88,7 @@ add_entries_fun () {
   read -p "$HG2"Tags"$Z: " -e tags 
   title=${title//' '/-}
   description=${description//' '/-}
-  taglength=${#tags}
-  if [ $taglength > 0 ]; then tags='#'${tags//' '/#}; else tags='#other'; fi
+  if [ ${#tags} == 0 ]; then tags='#p4'; else tags='#'${tags//' '/#}; fi
   id=$(date +%y%m%d%H%M%S)
   echo $id $tags $title $description >> kanban.txt
 }
@@ -155,12 +157,14 @@ ordered_entries_fun () {
   echo "-------------------------------------------------"
   if [ $2 ]
     then
-      recent_entries_fun "#orange" $max_results
-      recent_entries_fun "#soon" $max_results
-
-      recent_entries_fun $1 $2
+      recent_entries_fun "#p0" $((2 * $max_results))
+      recent_entries_fun "#started" $((1 * $max_results))
+      recent_entries_fun "#p1" $((2 * $max_results))
+      recent_entries_fun "#p2" $((2 * $max_results))
+      recent_entries_fun "#p3" $((1 * $max_results))
+      recent_entries_fun "#p4" $((1 * $max_results))
     else
-      recent_entries_fun $1 $max_results
+      recent_entries_fun $1 $((4 * $max_results))
   fi
 
   echo "-------------------------------------------------"
@@ -172,31 +176,38 @@ line_total=$(sed -n '$=' kanban.txt)
 line_count=1
 for i in `seq $line_total -1 1`; 
   do
-    if [ $1 ]
-      then
-        line_id=$(sed -n ${i}p kanban.txt | tr 'A-Z' 'a-z' | grep ${1,,} | cut -d ' ' -f 1)
-        if [ ${#line_id} == 12 ]; then title=$(sed -n ${i}p kanban.txt | grep ${line_id} | cut -d ' ' -f 3); fi
-      else 
-        title=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 3);
+    if [ $line_count -le $2 ]
+     then
+       if [ $1 ]
+         then
+           line_id=$(sed -n ${i}p kanban.txt | tr 'A-Z' 'a-z' | grep ${1,,} | cut -d ' ' -f 1)
+           if [ ${#line_id} == 12 ]; then title=$(sed -n ${i}p kanban.txt | grep ${line_id} | cut -d ' ' -f 3); fi
+         else 
+           title=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 3);
+       fi
+         
+         descr=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 4-)
+         task_status_p1=$(sed -n ${i}p kanban.txt | grep -c '#p1')
+         task_status_p0=$(sed -n ${i}p kanban.txt | grep -c '#p0')
+         task_status_p2=$(sed -n ${i}p kanban.txt | grep -c '#p2')
+         task_status_started=$(sed -n ${i}p kanban.txt | grep -c '#started')
+         task_status_p3=$(sed -n ${i}p kanban.txt | grep -c '#p3')
+         task_status_p4=$(sed -n ${i}p kanban.txt | grep -c '#p4')
+    
+       if [ $line_id ] && [ $line_count -le $2 ]
+         then
+           line_count=$((line_count +1))
+           color=$HG70
+           if [ $task_status_p1 -gt 0 ]; then color=$P1; fi
+           if [ $task_status_p0 -gt 0 ]; then color=$P0; fi
+           if [ $task_status_p2 -gt 0 ]; then color=$P2; fi
+           if [ $task_status_started -gt 0 ]; then color=$ST; fi
+           if [ $task_status_p3 -gt 0 ]; then color=$P3; fi
+           if [ $task_status_p4 -gt 0 ]; then color=$P4; fi
+           echo " ${color}${title//-/ } ${Z}${descr//-/ }" | cut -b -${results_width}
+    
+       fi
     fi
-      descr=$(sed -n ${i}p kanban.txt | cut -d ' ' -f 4-)
-      task_status_green=$(sed -n ${i}p kanban.txt | grep -c '#green')
-      task_status_soon=$(sed -n ${i}p kanban.txt | grep -c '#soon')
-      task_status_orange=$(sed -n ${i}p kanban.txt | grep -c '#orange')
-    if [ $line_id ] && [ $line_count -le $2 ]
-      then
-        line_count=$((line_count +1))
-        color=$HG70
-        if [ $task_status_soon -gt 0 ]; then color=$HG2; fi
-        if [ $task_status_green -gt 0 ]; then color=$G70; fi
-        if [ $task_status_orange -gt 0 ]; then color=$HO; fi
-        echo " ${color}${title//-/ } ${Z}${descr//-/ }" | cut -b -${results_width}
-    elif [ $line_count -gt $2 ]
-      then
-        echo "-------------------------------------------------"
-        exit 0
-    fi
-
   done
   
 }
