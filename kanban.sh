@@ -157,9 +157,9 @@ ordered_entries_fun () {
   echo "----------------------------------------"
   if [ $2 ]
     then
-      recent_entries_fun "#p0" $((3 * $max_results))
-      recent_entries_fun "#started" $((1 * $max_results))
-      recent_entries_fun "#p1" $((2 * $max_results))
+      recent_entries_fun "#p0" $((4 * $max_results))
+      recent_entries_fun "#started" $((4 * $max_results))
+      recent_entries_fun "#p1" $((3 * $max_results))
       recent_entries_fun "#p2" $((2 * $max_results))
       recent_entries_fun "#p3" $((1 * $max_results))
     else
