@@ -162,7 +162,6 @@ ordered_entries_fun () {
       recent_entries_fun "#p1" $((2 * $max_results))
       recent_entries_fun "#p2" $((2 * $max_results))
       recent_entries_fun "#p3" $((1 * $max_results))
-      recent_entries_fun "#p4" $((1 * $max_results))
     else
       recent_entries_fun $1 $((4 * $max_results))
   fi
@@ -192,7 +191,6 @@ for i in `seq $line_total -1 1`;
          task_status_p2=$(sed -n ${i}p kanban.txt | grep -c '#p2')
          task_status_started=$(sed -n ${i}p kanban.txt | grep -c '#started')
          task_status_p3=$(sed -n ${i}p kanban.txt | grep -c '#p3')
-         task_status_p4=$(sed -n ${i}p kanban.txt | grep -c '#p4')
     
        if [ $line_id ] && [ $line_count -le $2 ]
          then
@@ -203,7 +201,6 @@ for i in `seq $line_total -1 1`;
            if [ $task_status_p2 -gt 0 ]; then color=$P2; fi
            if [ $task_status_started -gt 0 ]; then color=$ST; fi
            if [ $task_status_p3 -gt 0 ]; then color=$P3; fi
-           if [ $task_status_p4 -gt 0 ]; then color=$P4; fi
            echo " ${color}${title//-/ } ${Z}${descr//-/ }" | cut -b -${results_width}
     
        fi
