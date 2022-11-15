@@ -158,9 +158,9 @@ ordered_entries_fun () {
   if [ $2 ]
     then
       recent_entries_fun "#p0" $((4 * $max_results))
-      recent_entries_fun "#started" $((4 * $max_results))
+      [ $max_results -gt 2 ] && recent_entries_fun "#started" $((4 * $max_results))      
       recent_entries_fun "#p1" $((3 * $max_results))
-      recent_entries_fun "#p2" $((2 * $max_results))
+      recent_entries_fun "#p2" $((3 * $max_results))
       recent_entries_fun "#p3" $((1 * $max_results))
     else
       recent_entries_fun $1 $((4 * $max_results))
