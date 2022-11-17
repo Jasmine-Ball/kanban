@@ -161,7 +161,7 @@ ordered_entries_fun () {
   if [ $2 ]
     then
       recent_entries_fun "P00" $((4 * $max_results))
-      [ $max_results -gt 3 ] && recent_entries_fun "#started" $((4 * $max_results))      
+      [ $max_results -gt 4 ] && recent_entries_fun "#started" $((4 * $max_results))      
       recent_entries_fun "P01" $((4 * $max_results))
       recent_entries_fun "P02" $((4 * $max_results))
       recent_entries_fun "P03" $((2 * $max_results))
