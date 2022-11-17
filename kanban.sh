@@ -89,7 +89,7 @@ add_entries_fun () {
   read -p "$HG2"Priority"$Z: " -i "P01" -e pr
   title=${title//' '/-}
   description=${description//' '/-}
-  if [ ${#tags} == 0 ]; then tags='#other'; else tags='#'${tags//' '/#}; fi
+  if [ ${#tags} == 0 ]; then tags='#1'; else tags='#'${tags//' '/#}; fi
   id=$(date +%y%m%d%H%M%S)
   echo $id $pr $tags $title $description >> kanban.txt
 }
@@ -166,7 +166,7 @@ ordered_entries_fun () {
       recent_entries_fun "P02" $((4 * $max_results))
       recent_entries_fun "P03" $((2 * $max_results))
     else
-      recent_entries_fun $1 $((4 * $max_results))
+      recent_entries_fun $1 $((20 * $max_results))
   fi
 
   echo "----------------------------------------"
@@ -206,7 +206,7 @@ for i in `seq $line_total -1 1`;
            if [ $task_status_p3 -gt 0 ]; then color=$P3; fi
            echo " ${color}${title//-/ } ${Z}${descr//-/ }" | cut -b -${results_width}
            line_count=$((line_count +1))
-       elif [ $line_count -ge 1 ]
+       elif [ $line_count -ge 1 ] && [ $2 -lt $max_results ]
          then
            return        
        fi
