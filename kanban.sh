@@ -163,10 +163,10 @@ ordered_entries_fun () {
 
   if [ $2 ]
     then
-      recent_entries_fun "P00" $((5 * $max_results))
+      recent_entries_fun "P00" $((10 * $max_results))
       [ $max_results -gt 4 ] && recent_entries_fun "#started" $((4 * $max_results))      
-      recent_entries_fun "P01" $((4 * $max_results))
-      recent_entries_fun "P02" $((4 * $max_results))
+      recent_entries_fun "P01" $((5 * $max_results))
+      recent_entries_fun "P02" $((5 * $max_results))
       recent_entries_fun "P03" $((2 * $max_results))
     else
       recent_entries_fun $1 $((20 * $max_results))
@@ -179,7 +179,7 @@ ordered_entries_fun () {
 recent_entries_fun () {
 line_total=$(sed -n '$=' kanban.txt)
 line_count=0
-max_time=$(date +%Y%m%d%H%M%S --date='+1 second')
+max_time=$(date +%Y%m%d%H%M%S --date='+3 second')
 
 for i in `seq $line_total -1 1`; 
   do
@@ -221,7 +221,7 @@ for i in `seq $line_total -1 1`;
        fi
 
     fi
-    
+
   done
   
 }
