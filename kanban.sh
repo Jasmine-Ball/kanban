@@ -147,20 +147,23 @@ update_entries_fun () {
 verbose_entries_fun () {
 echo "----------------------------------------"
 line_total=$(sed -n '$=' kanban.txt)
+
 for i in `seq $line_total -1 1`; 
   do
     line_id=$(sed -n ${i}p kanban.txt | tr 'A-Z' 'a-z' | grep ${1,,} | cut -d ' ' -f 1)
     if [ ${#line_id} == 12 ]; then title=$(sed -n ${i}p kanban.txt | grep ${line_id}); echo $title | cut -b -${results_width}; fi
   done
+
 echo "----------------------------------------"
 }
 
 #Order entries
 ordered_entries_fun () {
   echo "----------------------------------------"
+
   if [ $2 ]
     then
-      recent_entries_fun "P00" $((4 * $max_results))
+      recent_entries_fun "P00" $((5 * $max_results))
       [ $max_results -gt 4 ] && recent_entries_fun "#started" $((4 * $max_results))      
       recent_entries_fun "P01" $((4 * $max_results))
       recent_entries_fun "P02" $((4 * $max_results))
@@ -176,11 +179,14 @@ ordered_entries_fun () {
 recent_entries_fun () {
 line_total=$(sed -n '$=' kanban.txt)
 line_count=0
+max_time=$(date +%Y%m%d%H%M%S --date='+1 second')
+
 for i in `seq $line_total -1 1`; 
   do
-    if [ $line_count -le $2 ]
 
+    if [ $line_count -le $2 ]
      then
+
        if [ $1 ]
          then
            line_id=$(sed -n ${i}p kanban.txt | tr 'A-Z' 'a-z' | grep ${1,,} | cut -d ' ' -f 1)
@@ -195,7 +201,7 @@ for i in `seq $line_total -1 1`;
          task_status_p2=$(sed -n ${i}p kanban.txt | grep -c 'P02')
          task_status_started=$(sed -n ${i}p kanban.txt | grep -c 'P98')
          task_status_p3=$(sed -n ${i}p kanban.txt | grep -c 'P03')
-    
+       
        if [ $line_id ] && [ $line_count -le $2 ]
          then
            color=$HG70
@@ -206,11 +212,16 @@ for i in `seq $line_total -1 1`;
            if [ $task_status_p3 -gt 0 ]; then color=$P3; fi
            echo " ${color}${title//-/ } ${Z}${descr//-/ }" | cut -b -${results_width}
            line_count=$((line_count +1))
-       elif [ $line_count -ge 1 ] && [ $2 -lt $max_results ]
-         then
-           return        
+         elif [ $line_count -ge 1 ] && [ $2 -lt $max_results ]
+           then
+             return        
+         elif [ $(date +%Y%m%d%H%M%S) -gt $max_time ]
+           then
+             return
        fi
+
     fi
+    
   done
   
 }
