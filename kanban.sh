@@ -28,7 +28,8 @@ HO=$(tput bold setaf 1)
 O=$(tput setaf 1)
 Z=$(tput sgr0)
 
-
+#Set verbose mode
+verbose=0
 
 #Set the terminal to start at the top
 tput -x clear
@@ -98,6 +99,7 @@ add_entries_fun () {
 filter_entries_fun () {
   read -p "$HG2"Search"$Z: " -e search 
   selected_id=$(sed -n /.*$search.*/p kanban.txt | cut -d ' ' -f 1)
+  verbose=1
   ordered_entries_fun $search
 }
 
@@ -160,7 +162,6 @@ echo "----------------------------------------"
 #Order entries
 ordered_entries_fun () {
   echo "----------------------------------------"
-
   if [ $2 ]
     then
       recent_entries_fun "P00" $((10 * $max_results))
@@ -179,7 +180,7 @@ ordered_entries_fun () {
 recent_entries_fun () {
 line_total=$(sed -n '$=' kanban.txt)
 line_count=0
-max_time=$(date +%Y%m%d%H%M%S --date='+5 second')
+max_time=$(date +%Y%m%d%H%M%S --date='+1 second')
 for i in `seq $line_total -1 1`; 
   do
 
@@ -214,7 +215,7 @@ for i in `seq $line_total -1 1`;
          elif [ $line_count -ge 1 ] && [ $2 -lt $max_results ]
            then
              return        
-         elif [ $(date +%Y%m%d%H%M%S) -gt $max_time ]
+         elif [ $(date +%Y%m%d%H%M%S) -gt $max_time ] && [ $verbose -eq 0 ]
            then
              return
        fi
