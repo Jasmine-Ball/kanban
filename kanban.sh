@@ -179,8 +179,7 @@ ordered_entries_fun () {
 recent_entries_fun () {
 line_total=$(sed -n '$=' kanban.txt)
 line_count=0
-max_time=$(date +%Y%m%d%H%M%S --date='+3 second')
-
+max_time=$(date +%Y%m%d%H%M%S --date='+5 second')
 for i in `seq $line_total -1 1`; 
   do
 
