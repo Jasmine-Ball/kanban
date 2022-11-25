@@ -232,7 +232,7 @@ show_menu_fun () {
   process_user_selection $menu_input
 }
 
-#Set prefered amount of data per entry
+#Set display preferences: data per entry, clear out completed
 set_prefs_fun () {
  if [ $1 == "setw" ]
    then
@@ -240,6 +240,10 @@ set_prefs_fun () {
  elif [ $1 == "setr" ]
    then
      echo $results_width $2 > kanban_params.txt
+ elif [ $1 == "clear" ]
+   then
+     sed -i 's/ '${2}' / P99 /g' kanban.txt
+     show_menu_fun
  fi
 
 }
