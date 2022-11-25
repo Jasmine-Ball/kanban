@@ -134,6 +134,7 @@ update_entries_fun () {
       read -p "$HG2"Description"$Z: " -i $description -e description
       read -p "$HG2"Tags"$Z: " -i $tags -e tags
       read -p "$HG2"Priority"$Z: " -i $pr -e pr
+      if [ ${#description} == 0 ]; then description='-'; fi
       sed -i /${selected_id}/d kanban.txt
       title=${title//' '/-}
       description=${description//' '/-}
