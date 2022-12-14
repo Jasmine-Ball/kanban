@@ -245,6 +245,11 @@ set_prefs_fun () {
    then
      sed -i 's/ '${2}' / P99 /g' kanban.txt
      show_menu_fun
+ elif [ $1 == "td" ] || [ $1 == "TD" ]
+   then
+    tags="#"$(echo $2 | cut -b 1-3)"td"
+    echo $(date +%y%m%d%H%M%S) "TD0" $tags $2 "No-details-yet" >> kanban.txt
+    show_menu_fun
  fi
 
 }
