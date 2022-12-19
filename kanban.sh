@@ -250,6 +250,12 @@ set_prefs_fun () {
     tags="#"$(echo $2 | cut -b 1-3)"td"
     echo $(date +%y%m%d%H%M%S) "TD0" $tags $2 "No-details-yet" >> kanban.txt
     show_menu_fun
+ elif [ $1 == "c" ] || [ $1 == "C" ]
+   then
+    selected_id=$(sed -n /.*$2.*/p kanban.txt | cut -d ' ' -f -4)
+    sed -i /${2}/d kanban.txt
+    echo $selected_id" ""-[$(date +%d)]-" >> kanban.txt
+    show_menu_fun
  fi
 
 }
