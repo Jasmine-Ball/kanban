@@ -252,7 +252,7 @@ set_prefs_fun () {
     show_menu_fun
  elif [ $1 == "c" ] || [ $1 == "C" ]
    then
-    selected_id=$(sed -n /.*$2.*/p kanban.txt | cut -d ' ' -f -4)
+    selected_id=$(sed -n /.*$2.*/p kanban.txt | cut -d ' ' -f -5)
     sed -i /${2}/d kanban.txt
     echo $selected_id" ""-[$(date +%d)]-" >> kanban.txt
     show_menu_fun
