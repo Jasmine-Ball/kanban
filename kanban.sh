@@ -256,6 +256,13 @@ set_prefs_fun () {
     sed -i /${2}/d kanban.txt
     echo $selected_id" ""-[$(date +%d)]-" >> kanban.txt
     show_menu_fun
+ elif [ $1 == "show" ] || [ $1 == "SHOW" ]
+   then
+   if [ $2 == "help" ]
+     then
+     echo "Complete task: ./script.sh c task"
+     echo "Hide completed task: ./script.sh clear task"
+     fi
  fi
 
 }
